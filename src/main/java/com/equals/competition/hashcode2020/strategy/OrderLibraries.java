@@ -1,7 +1,6 @@
-package com.equals.competition.hashcode2020.hypothesis;
+package com.equals.competition.hashcode2020.strategy;
 
 import com.equals.competition.hashcode2020.LibraryScanner;
-import com.equals.competition.hashcode2020.LibraryScanner.Book;
 import com.equals.competition.hashcode2020.LibraryScanner.Library;
 
 import java.util.Arrays;
@@ -13,13 +12,12 @@ import java.util.Comparator;
  * next library process all its books except the ones
  * scanned by previous library in the list etc
  */
-public class OrderLibraries implements Hypothesis {
+public class OrderLibraries implements Strategy {
     private int D;
     private Library[] libraries;
-    private Book[] books;
 
     @Override
-    public void checkHypothesis(LibraryScanner libraryScanner) {
+    public void useStrategy(LibraryScanner libraryScanner) {
         int currentDay = 0;
         int currentLibraryIndex = 0;
 

@@ -1,6 +1,6 @@
 package com.equals.competition.hashcode2020;
 
-import com.equals.competition.hashcode2020.hypothesis.Hypothesis;
+import com.equals.competition.hashcode2020.strategy.Strategy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class LibraryScanner {
-    private final Hypothesis hypothesis;
+    private final Strategy strategy;
     private final String fileName;
 
     private int B;
@@ -150,9 +150,9 @@ public class LibraryScanner {
         }
     }
 
-    public LibraryScanner(String fileName, Hypothesis hypothesis) {
+    public LibraryScanner(String fileName, Strategy strategy) {
         this.fileName = fileName;
-        this.hypothesis = hypothesis;
+        this.strategy = strategy;
         loadDataFromFile(fileName);
     }
 
@@ -190,7 +190,7 @@ public class LibraryScanner {
      * @return
      */
     public String solve() {
-        hypothesis.checkHypothesis(this);
+        strategy.useStrategy(this);
 
         return getSolution();
     }

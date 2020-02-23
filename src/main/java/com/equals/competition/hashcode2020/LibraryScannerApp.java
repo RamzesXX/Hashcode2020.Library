@@ -1,7 +1,7 @@
 package com.equals.competition.hashcode2020;
 
-import com.equals.competition.hashcode2020.hypothesis.Hypothesis;
-import com.equals.competition.hashcode2020.hypothesis.OrderLibraries;
+import com.equals.competition.hashcode2020.strategy.Strategy;
+import com.equals.competition.hashcode2020.strategy.OrderLibraries;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -20,14 +20,14 @@ public class LibraryScannerApp {
         int fullEarnedScore = 0;
         int fullTime = 0;
         boolean showSolution = false;
-        Hypothesis hypothesis = new OrderLibraries();
+        Strategy strategy = new OrderLibraries();
 //        String filename = EXAMPLES[0];
 
         for (String filename : EXAMPLES) {
             Instant start = Instant.now();
 
             System.out.println("-----------------");
-            LibraryScanner libraryScanner = new LibraryScanner(filename, hypothesis);
+            LibraryScanner libraryScanner = new LibraryScanner(filename, strategy);
             System.out.println("Solution for: " + libraryScanner.getFileName());
             String solution = libraryScanner.solve();
             if (showSolution) {
