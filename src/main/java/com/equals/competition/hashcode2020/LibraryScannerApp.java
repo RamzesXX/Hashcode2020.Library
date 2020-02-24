@@ -1,7 +1,9 @@
 package com.equals.competition.hashcode2020;
 
-import com.equals.competition.hashcode2020.strategy.Strategy;
+import com.equals.competition.hashcode2020.strategy.AnalyzePeriodsForLibraries;
+import com.equals.competition.hashcode2020.strategy.DayByDay;
 import com.equals.competition.hashcode2020.strategy.OrderLibraries;
+import com.equals.competition.hashcode2020.strategy.Strategy;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -20,7 +22,7 @@ public class LibraryScannerApp {
         int fullEarnedScore = 0;
         int fullTime = 0;
         boolean showSolution = false;
-        Strategy strategy = new OrderLibraries();
+        Strategy strategy = new DayByDay();
 //        String filename = EXAMPLES[0];
 
         for (String filename : EXAMPLES) {

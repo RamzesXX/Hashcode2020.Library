@@ -6,18 +6,19 @@ import com.equals.competition.hashcode2020.LibraryScanner.Book;
 import com.equals.competition.hashcode2020.LibraryScanner.Library;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Go day by day and check for each day the best thing to do (best score)
  *
- * BestScore is 10842070
+ * BestScore is 18145900 (when we take signed up library in ascending order of value for a day - 18145921)
  */
 public class DayByDay implements Strategy {
     private int D;
     private Library[] libraries;
     private Book[] books;
-    List<Library> signedUpLibraries = new ArrayList<>();
+    private List<Library> signedUpLibraries = new ArrayList<>();
 
     @Override
     public void useStrategy(LibraryScanner libraryScanner) {
@@ -33,24 +34,59 @@ public class DayByDay implements Strategy {
                 signingUpLibrary = null;
             }
 
-            //for each signed up library determine which  books and order of libraries
+            if (!signedUpLibraries.isEmpty()){
+                signedUpLibraries.sort(byValueForOneDay());
+                for (Library library : signedUpLibraries) {
+                    library.sendBooksToScan(currentDay);
+                }
+            }
 
             if (signingUpLibrary == null) {
-                //find library
-                signingUpLibrary = libraries[0];
-                signingUpLibrary.signUp(currentDay);
+                signingUpLibrary = getLibraryToSignUp(currentDay);
+                if (signingUpLibrary != null) {
+                    signingUpLibrary.signUp(currentDay);
+                }
             }
         }
-/*
+    }
 
-        while (currentDay < D && currentLibraryIndex < libraries.length) {
-            Library library = libraries[currentLibraryIndex];
+    private Comparator<Library> byValueForOneDay() {
+        //by changing order to ascending we get small profit
+        // return Comparator.comparingInt(library -> getValueForOneDay(library));
+        return Comparator.comparingInt(library -> -getValueForOneDay(library));
+    }
 
-            library.signUp(currentDay);
-            library.sendBooksToScan(currentDay + library.getSignUpDuration(), D - 1);
+    private int getValueForOneDay(Library library){
+        int value = library.getBooks().stream()
+                .filter(book -> !book.isScanned())
+                .mapToInt(Book::getScore)
+                .limit(library.getBooksPerDay())
+                .sum();
 
-            currentLibraryIndex++;
-            currentDay += library.getSignUpDuration();
-        }*/
+        return value;
+    }
+
+    private Library getLibraryToSignUp(final int signUpDay) {
+        int value = 0;
+        Library library = null;
+        for (Library lib :libraries) {
+            int currentValue = getValueForPeriod(lib, signUpDay);
+            if (currentValue > value && !lib.isSignedUp()) {
+                value = currentValue;
+                library = lib;
+            }
+        }
+        return library;
+    }
+
+    private int getValueForPeriod(Library library, int signUpDay) {
+        long booksCanBeScannedForPeriod = (long) Math.max(0, D - signUpDay - library.getSignUpDuration()) * library.getBooksPerDay();
+
+        return library.getBooks().stream()
+                .filter(book -> !book.isScanned())
+                .mapToInt(LibraryScanner.Book::getScore)
+                .limit(booksCanBeScannedForPeriod)
+                .sum();
+
     }
 }

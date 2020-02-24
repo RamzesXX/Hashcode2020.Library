@@ -23,7 +23,7 @@ public class OrderLibraries implements Strategy {
 
         libraries = libraryScanner.getLibraries();
         D = libraryScanner.getD();
-        Arrays.sort(libraries, bySignUpDurationAsc());
+        Arrays.sort(libraries, byLibraryDayProfitDesc());
         while (currentDay < D && currentLibraryIndex < libraries.length) {
             Library library = libraries[currentLibraryIndex];
 
@@ -63,10 +63,8 @@ public class OrderLibraries implements Strategy {
     }
 
     public int valueForPeriod(Library library, int periodLengthDays) {
-        int booksCanBeScannedForPeriod = Math.max(0, periodLengthDays - library.getSignUpDuration()) * library.getBooksPerDay();
-        if (booksCanBeScannedForPeriod < 0) {
-            System.out.println(booksCanBeScannedForPeriod);
-        }
+        long booksCanBeScannedForPeriod = (long) Math.max(0, periodLengthDays - library.getSignUpDuration()) * library.getBooksPerDay();
+
         int value = library.getBooks().stream()
                 .filter(book -> !book.isScanned())
                 .mapToInt(LibraryScanner.Book::getScore)
@@ -74,5 +72,29 @@ public class OrderLibraries implements Strategy {
                 .sum();
 
         return value;
+    }
+
+    /**
+     * Orders libraries by earned score for whole period in descending order
+     *
+     * BestScore is 15438747
+     */
+    private Comparator<Library> byLibraryDayProfitDesc() {
+        return Comparator.comparingDouble(library -> -maxLibraryDayProfit(library, D));
+    }
+
+    public double maxLibraryDayProfit(Library library, int periodLengthDays) {
+        long booksCanBeScannedForPeriod = (long) Math.max(0, periodLengthDays - library.getSignUpDuration()) * library.getBooksPerDay();
+
+        if (booksCanBeScannedForPeriod == 0) {
+            return 0.0;
+        }
+        int value = library.getBooks().stream()
+                .filter(book -> !book.isScanned())
+                .mapToInt(LibraryScanner.Book::getScore)
+                .limit(booksCanBeScannedForPeriod)
+                .sum();
+
+        return (double) value / periodLengthDays;
     }
 }
