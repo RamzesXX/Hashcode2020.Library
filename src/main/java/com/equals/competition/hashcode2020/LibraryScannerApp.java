@@ -17,14 +17,12 @@ public class LibraryScannerApp {
             "e_so_many_books.txt",
             "f_libraries_of_the_world.txt"
     };
-    public static final Strategy STRATEGY = new OrderLibraries();
+    public static final Strategy STRATEGY = new AnalyzePeriodsForLibraries();
     public static final boolean SHOW_SOLUTION = false;
 
     public static void main(String[] args) {
         int fullEarnedScore = 0;
         int fullTime = 0;
-        //        String filename = EXAMPLES[0];
-
         for (String filename : EXAMPLES) {
             Instant start = Instant.now();
 
