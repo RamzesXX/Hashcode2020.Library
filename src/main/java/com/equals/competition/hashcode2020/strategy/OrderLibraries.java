@@ -23,7 +23,7 @@ public class OrderLibraries implements Strategy {
 
         libraries = libraryScanner.getLibraries();
         D = libraryScanner.getD();
-        Arrays.sort(libraries, byLibraryDayProfitDesc());
+        Arrays.sort(libraries, bySignUpDurationAsc());
         while (currentDay < D && currentLibraryIndex < libraries.length) {
             Library library = libraries[currentLibraryIndex];
 
@@ -65,13 +65,11 @@ public class OrderLibraries implements Strategy {
     public int valueForPeriod(Library library, int periodLengthDays) {
         long booksCanBeScannedForPeriod = (long) Math.max(0, periodLengthDays - library.getSignUpDuration()) * library.getBooksPerDay();
 
-        int value = library.getBooks().stream()
+        return library.getBooks().stream()
                 .filter(book -> !book.isScanned())
                 .mapToInt(LibraryScanner.Book::getScore)
                 .limit(booksCanBeScannedForPeriod)
                 .sum();
-
-        return value;
     }
 
     /**

@@ -57,13 +57,12 @@ public class DayByDay implements Strategy {
     }
 
     private int getValueForOneDay(Library library){
-        int value = library.getBooks().stream()
+
+        return library.getBooks().stream()
                 .filter(book -> !book.isScanned())
                 .mapToInt(Book::getScore)
                 .limit(library.getBooksPerDay())
                 .sum();
-
-        return value;
     }
 
     private Library getLibraryToSignUp(final int signUpDay) {
