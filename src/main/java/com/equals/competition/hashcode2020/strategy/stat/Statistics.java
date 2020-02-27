@@ -1,6 +1,8 @@
  package com.equals.competition.hashcode2020.strategy.stat;
 
 import com.equals.competition.hashcode2020.LibraryScanner;
+import com.equals.competition.hashcode2020.LibraryScanner.Book;
+import com.equals.competition.hashcode2020.LibraryScanner.Library;
 
 
 import java.util.Comparator;
@@ -13,13 +15,13 @@ public class Statistics {
     Map<Integer, LibraryStat> librariesStat;
     Map<Integer, BookStat> booksStat;
 
-    private final LibraryScanner.Library[] libraries;
+    private final Library[] libraries;
     private final int dayLeft;
     int longestSignUp;
     int shortestSignUp;
-    List<LibraryScanner.Book> booksSortedByOccurrenceDesc;
+    List<Book> booksSortedByOccurrenceDesc;
 
-    public Statistics(LibraryScanner.Library[] libraries, int dayLeft) {
+    public Statistics(Library[] libraries, int dayLeft) {
         this.libraries = libraries;
         this.dayLeft = dayLeft;
         this.librariesStat = new HashMap<>();
@@ -30,7 +32,7 @@ public class Statistics {
     private void calcStatistic() {
         longestSignUp = 0;
         shortestSignUp = dayLeft;
-        for (LibraryScanner.Library library : libraries) {
+        for (Library library : libraries) {
             LibraryStat libraryStat = librariesStat.computeIfAbsent(library.getId(), id -> new LibraryStat());
             libraryStat.library = library;
             libraryStat.minBookScore = library.getBooks().isEmpty() ? 0 : library.getBooks().get(0).getScore();
@@ -39,7 +41,7 @@ public class Statistics {
             libraryStat.booksCanBeScanned = (int)booksCanBeScanned;
             longestSignUp = Math.max(longestSignUp, library.getSignUpDuration());
             shortestSignUp = Math.min(shortestSignUp, library.getSignUpDuration());
-            for (LibraryScanner.Book book : library.getBooks()) {
+            for (Book book : library.getBooks()) {
                 if (!book.isScanned()) {
                     BookStat bookStat = booksStat.computeIfAbsent(book.getId(), id -> new BookStat());
                     bookStat.book = book;
@@ -70,7 +72,7 @@ public class Statistics {
         booksSortedByOccurrenceDesc = booksStat.keySet().stream()
                 .sorted(Comparator.comparingInt(bookId -> booksStat.get(bookId).libraries.size()))
                 .map(booksStat::get)
-                .map(BookStat::getBook)
+                .map(bookStat -> bookStat.book)
                 .collect(Collectors.toList());
 
         for (LibraryScanner.Library library : libraries) {
