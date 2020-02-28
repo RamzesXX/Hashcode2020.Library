@@ -23,7 +23,7 @@ public class OrderLibraries implements Strategy {
 
         libraries = libraryScanner.getLibraries();
         D = libraryScanner.getD();
-        Arrays.sort(libraries, bySignUpDurationAsc());
+        Arrays.sort(libraries, byLibrarySignUpDividedByBooksPerDay());
         while (currentDay < D && currentLibraryIndex < libraries.length) {
             Library library = libraries[currentLibraryIndex];
 
@@ -94,5 +94,14 @@ public class OrderLibraries implements Strategy {
                 .sum();
 
         return (double) value / periodLengthDays;
+    }
+
+    /**
+     * Orders libraries by earned score for whole period in descending order
+     *
+     * BestScore is 21734568
+     */
+    private Comparator<Library> byLibrarySignUpDividedByBooksPerDay() {
+        return Comparator.comparingDouble(library -> (double)library.getSignUpDuration()/library.getBooksPerDay());
     }
 }
