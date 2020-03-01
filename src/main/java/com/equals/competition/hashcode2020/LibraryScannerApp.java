@@ -3,6 +3,7 @@ package com.equals.competition.hashcode2020;
 import com.equals.competition.hashcode2020.strategy.AnalyzePeriodsForLibraries;
 import com.equals.competition.hashcode2020.strategy.DayByDay;
 import com.equals.competition.hashcode2020.strategy.OrderLibraries;
+import com.equals.competition.hashcode2020.strategy.StatisticsBasedOnBookValues;
 import com.equals.competition.hashcode2020.strategy.Strategy;
 
 import java.time.Duration;
@@ -17,13 +18,14 @@ public class LibraryScannerApp {
             "e_so_many_books.txt",
             "f_libraries_of_the_world.txt"
     };
-    public static final Strategy STRATEGY = new AnalyzePeriodsForLibraries();
+    public static final Strategy STRATEGY = new StatisticsBasedOnBookValues();
     public static final boolean SHOW_SOLUTION = false;
 
     public static void main(String[] args) {
         int fullEarnedScore = 0;
         int fullTime = 0;
         for (String filename : EXAMPLES) {
+//        for (String filename : new String[] {EXAMPLES[2]}) {
             Instant start = Instant.now();
 
             System.out.println("-----------------");

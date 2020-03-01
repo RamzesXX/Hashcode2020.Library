@@ -14,10 +14,7 @@ import java.util.List;
  *
  * BestScore is 18145900 (when we take signed up library in ascending order of value for a day - 18145921)
  */
-public class DayByDay implements Strategy {
-    private int D;
-    private Library[] libraries;
-    private Book[] books;
+public class DayByDay extends Strategy {
     private List<Library> signedUpLibraries = new ArrayList<>();
 
     @Override

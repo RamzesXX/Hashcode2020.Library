@@ -31,6 +31,7 @@ public class LibraryScanner {
             this.id = id;
             this.score = score;
             this.scannedAt = NOT_SCANNED;
+            this.scannedBy = NOT_SCANNED;
         }
 
         public int getId() {

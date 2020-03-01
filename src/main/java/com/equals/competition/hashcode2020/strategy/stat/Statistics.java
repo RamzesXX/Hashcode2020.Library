@@ -1,9 +1,7 @@
 package com.equals.competition.hashcode2020.strategy.stat;
 
-import com.equals.competition.hashcode2020.LibraryScanner;
 import com.equals.competition.hashcode2020.LibraryScanner.Book;
 import com.equals.competition.hashcode2020.LibraryScanner.Library;
-
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,9 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Statistics {
-    Map<Integer, LibraryStat> librariesStat;
-    Map<Integer, BookStat> booksStat;
-
+    private Map<Integer, LibraryStat> librariesStat;
+    private Map<Integer, BookStat> booksStat;
     private final Library[] libraries;
     private final int dayLeft;
     int longestSignUp;
@@ -69,30 +66,32 @@ public class Statistics {
         float scorePerDayPotential = 0;
 
         libraryStat.resetBaseStatistics();
-        for (Book book : library.getBooks()) {
-            if (!book.isScanned()) {
-                if (reCalcBooks) {
-                    BookStat bookStat = booksStat.computeIfAbsent(book.getId(), id -> new BookStat(book));
-                    bookStat.getLibraries().add(library);//???
-                }
+        // there is no sense to calc any statistics if library can't scan books anymore
+        if (booksCanBeScanned > 0) {
+            for (Book book : library.getBooks()) {
+                if (!book.isScanned()) {
+                    if (reCalcBooks) {
+                        BookStat bookStat = booksStat.computeIfAbsent(book.getId(), id -> new BookStat(book));
+                        bookStat.getLibraries().add(library);//???
+                    }
 
-                booksNotScanned++;
-                currentLibraryValue += book.getScore();
-                if (booksCanBeScanned >= booksNotScanned) {
-                    currentLibraryValueForLeftDays += book.getScore();
+                    booksNotScanned++;
+                    currentLibraryValue += book.getScore();
+                    if (booksCanBeScanned >= booksNotScanned) {
+                        currentLibraryValueForLeftDays += book.getScore();
+                    }
+                    minBookScore = Math.min(minBookScore, book.getScore());
+                    maxBookScore = Math.max(maxBookScore, book.getScore());
                 }
-                minBookScore = Math.min(minBookScore, book.getScore());
-                maxBookScore = Math.max(maxBookScore, book.getScore());
+            }
+
+            if (booksNotScanned > 0) {
+                daysToProcessAllBooks = daysToSignUp + booksNotScanned / library.getBooksPerDay();
+                avgBookScore = (float) currentLibraryValue / booksNotScanned;
+                scorePerDay = (float) currentLibraryValueForLeftDays / dayLeft;
+                scorePerDayPotential = daysToProcessAllBooks > 0 ? (float) currentLibraryValue / daysToProcessAllBooks : 0.0f;
             }
         }
-
-        if (booksNotScanned > 0) {
-            daysToProcessAllBooks = daysToSignUp + booksNotScanned / library.getBooksPerDay();
-            avgBookScore = (float) currentLibraryValue / booksNotScanned;
-            scorePerDay = (float) currentLibraryValueForLeftDays / dayLeft;
-            scorePerDayPotential = daysToProcessAllBooks > 0 ? (float) currentLibraryValue / daysToProcessAllBooks : 0.0f;
-        }
-
         libraryStat.setCurrentLibraryValue(currentLibraryValue);
         libraryStat.setCurrentLibraryValueForLeftDays(currentLibraryValueForLeftDays);
         libraryStat.setMinBookScore(minBookScore);
@@ -112,20 +111,54 @@ public class Statistics {
         int valueOfUnique = 0;
 
         libraryStat.resetExtraStatistics();
-        for (Book book : library.getBooks()) {
-            BookStat bookStat = booksStat.get(book.getId());
-            if (!book.isScanned()) {
-                if (bookStat.getLibraries().size() == 1) {
-                    amountOfUniqueBooks++;
-                    valueOfUnique += book.getScore();
-                    bookStat.setAssignedTo(library);
-                } else {
-                    libraryStat.getLibraryIntersection().addAll(bookStat.getLibraries());
+        if (libraryStat.getBooksCanBeScanned() > 0) {
+            for (Book book : library.getBooks()) {
+                BookStat bookStat = getBookStat(book.getId());
+                if (!book.isScanned()) {
+                    if (bookStat.getLibraries().size() == 1) {
+                        amountOfUniqueBooks++;
+                        valueOfUnique += book.getScore();
+                        bookStat.setAssignedTo(library);
+                    } else {
+                        libraryStat.getLibraryIntersection().addAll(bookStat.getLibraries());
+                    }
                 }
             }
+            libraryStat.getLibraryIntersection().remove(library);
         }
-        libraryStat.getLibraryIntersection().remove(library);
         libraryStat.setAmountOfUniqueBooks(amountOfUniqueBooks);
         libraryStat.setValueOfUnique(valueOfUnique);
+    }
+
+    public Map<Integer, LibraryStat> getLibrariesStat() {
+        return librariesStat;
+    }
+
+    public Map<Integer, BookStat> getBooksStat() {
+        return booksStat;
+    }
+
+    public int getDayLeft() {
+        return dayLeft;
+    }
+
+    public int getLongestSignUp() {
+        return longestSignUp;
+    }
+
+    public int getShortestSignUp() {
+        return shortestSignUp;
+    }
+
+    public List<Book> getBooksSortedByOccurrenceDesc() {
+        return booksSortedByOccurrenceDesc;
+    }
+
+    public LibraryStat getLibraryStat(int libraryId){
+        return librariesStat.get(libraryId);
+    }
+
+    public BookStat getBookStat(int bookId){
+        return booksStat.get(bookId);
     }
 }

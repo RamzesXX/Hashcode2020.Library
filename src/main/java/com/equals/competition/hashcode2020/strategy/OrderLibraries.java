@@ -12,10 +12,7 @@ import java.util.Comparator;
  * next library process all its books except the ones
  * scanned by previous library in the list etc
  */
-public class OrderLibraries implements Strategy {
-    private int D;
-    private Library[] libraries;
-
+public class OrderLibraries extends Strategy {
     @Override
     public void useStrategy(LibraryScanner libraryScanner) {
         int currentDay = 0;
